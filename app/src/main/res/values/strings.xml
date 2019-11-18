@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Mobile Systeme</string>
+    <string name="Accelerometer">Geraet gedreht</string>
+    <string name="Barometer">Druck</string>
+</resources>
