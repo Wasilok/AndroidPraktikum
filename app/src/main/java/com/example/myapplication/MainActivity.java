@@ -41,8 +41,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-//2.0
-
 //Quelle für Accelerometer: https://www.vogella.com/tutorials/AndroidSensor/article.
 //Quelle für Barometer: https://www.ssaurel.com/blog/creating-a-barometer-application-for-android/
 //Quelle für GPS-Sensor: https://www.aeq-web.com/android-gps-daten-auslesen/
