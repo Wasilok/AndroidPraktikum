@@ -1,43 +1,32 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -46,6 +35,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 
 
@@ -73,6 +67,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView v_sat = null;
     private TextView v_gps_status = null;
     private TextView v_update_status = null;
+    private TextView tVpersonName = null;
+    private TextView tVpersonGivenName = null;
+    private TextView tVpersonFamilyName = null;
+    private TextView tVpersonEmail = null;
+    private ImageView tVpersonPhoto = null;
+
+
     String longitude = "";
     String latitude = "";
     String location = "";
@@ -143,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnGetLocation.setOnClickListener(this);
         locationMangaer = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
+        //TextViews für Googlekonto Info
+        tVpersonName = findViewById(R.id.tVpersonName);
+        tVpersonGivenName = findViewById(R.id.tVpersonGivenName);
+        tVpersonFamilyName = findViewById(R.id.tVpersonFamilyName);
+        tVpersonEmail = findViewById(R.id.tVpersonEmail);
+        tVpersonPhoto = findViewById(R.id.tVpersonPhoto);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -156,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
     }
-
+    //Auto Login
     @Override
     protected void onStart() {
         super.onStart();
@@ -180,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             v_gps_status.setText("No GPS-Access!!!");
             v_gps_status.setTextColor(Color.parseColor("#ff0000"));
         }
-
+        //Bei drücken von Button wird angemeldet bzw abgemeldet
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
@@ -195,6 +202,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        //Daten werden von Google ausgelesen
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+            //Variablen werden angesprochen und in die TextViews befüllt
+            this.tVpersonName.setText(tVpersonName.getText() +": "+ personName);
+            this.tVpersonGivenName.setText(tVpersonGivenName.getText() +": "+ personGivenName);
+            this.tVpersonFamilyName.setText(tVpersonFamilyName.getText() +": "+ personFamilyName);
+            this.tVpersonEmail.setText(tVpersonEmail.getText() +": "+ personEmail);
+            this.tVpersonPhoto.setImageURI(personPhoto);
+        }
     }
     private void signOut() {
         mGoogleSignInClient.signOut()
@@ -204,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         // ...
                     }
                 });
+
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -221,6 +245,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void updateUI(GoogleSignInAccount account) {
+    }
+    //Clear TextView nach SignOut
+    public void clear(View view) {
+        this.tVpersonName.setText("Name");
+        this.tVpersonGivenName.setText("Vorname");
+        this.tVpersonFamilyName.setText("Nachname");
+        this.tVpersonEmail.setText("e-Mail");
+        this.tVpersonPhoto.setImageURI(null);
     }
 
     private class APPLocationListener implements LocationListener {
