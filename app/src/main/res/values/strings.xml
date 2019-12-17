@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mobile Systeme</string>
+    <string name="Accelerometer">Geraet gedreht</string>
+    <string name="Barometer">Druck</string>
+    <string name="default_notification_channel_id">channelId</string>
+    <string name="fcm_message">Pisse aus meinem Arsch !!!!! </string>
+</resources>
